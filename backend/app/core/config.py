@@ -1,0 +1,42 @@
+from pydantic_settings import BaseSettings
+from functools import lru_cache
+from typing import Optional
+
+class Settings(BaseSettings):
+    """Application settings."""
+    
+    # API Settings
+    API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "SpotifEye"
+    BACKEND_HOST: str = "0.0.0.0"
+    BACKEND_PORT: int = 8000
+    
+    # Frontend Settings
+    FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_CALLBACK_PATH: str = "/callback"
+    
+    # Spotify Settings
+    SPOTIFY_CLIENT_ID: str
+    SPOTIFY_CLIENT_SECRET: str
+    SPOTIFY_REDIRECT_URI: str = "http://localhost:5173/callback"  # Will be constructed from FRONTEND_URL and FRONTEND_CALLBACK_PATH
+    
+    # Security Settings
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Construct the redirect URI from components if not explicitly set
+        if not kwargs.get("SPOTIFY_REDIRECT_URI"):
+            self.SPOTIFY_REDIRECT_URI = f"{self.FRONTEND_URL}{self.FRONTEND_CALLBACK_PATH}"
+
+@lru_cache()
+def get_settings() -> Settings:
+    """Get cached settings instance."""
+    return Settings()
+
+settings = get_settings() 
