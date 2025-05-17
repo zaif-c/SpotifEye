@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     # Spotify Settings
     SPOTIFY_CLIENT_ID: str
     SPOTIFY_CLIENT_SECRET: str
-    SPOTIFY_REDIRECT_URI: str = "http://127.0.0.1:5173/callback"
+    SPOTIFY_REDIRECT_URI: str = "http://127.0.0.1:8000/callback"
     SPOTIFY_SCOPES: str = (
         "user-read-private user-read-email user-read-playback-state user-modify-playback-state "
         "user-read-currently-playing user-read-recently-played user-top-read "

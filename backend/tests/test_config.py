@@ -14,7 +14,7 @@ def test_settings_loading() -> None:
     assert settings.BACKEND_PORT == 8000
 
     # Test Frontend settings
-    assert settings.FRONTEND_URL == "http://127.0.0.1:5173"
+    assert settings.FRONTEND_URL == "http://127.0.0.1:8000"
     assert settings.FRONTEND_CALLBACK_PATH == "/callback"
 
     # Test that redirect URI is constructed correctly
