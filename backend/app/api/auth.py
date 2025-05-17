@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Set
@@ -7,6 +7,9 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.exceptions import SpotifyException
 import logging
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import Request
+from spotipy.cache_handler import MemoryCacheHandler
 
 from app.core.config import settings
 
@@ -17,7 +20,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # OAuth2 scheme for token authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = HTTPBearer()
 
 # Secret key for JWT
 SECRET_KEY = settings.SECRET_KEY
@@ -43,7 +46,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
         logger.error(f"Error creating JWT token: {str(e)}")
         raise HTTPException(status_code=500, detail="Error creating authentication token")
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme)) -> str:
     """Validate JWT token and return Spotify access token."""
     credentials_exception = HTTPException(
         status_code=401,
@@ -51,6 +54,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        token = credentials.credentials
         # Check if token is blacklisted
         if token in token_blacklist:
             logger.warning("Attempted to use blacklisted token")
@@ -125,15 +129,16 @@ async def login():
         raise HTTPException(status_code=500, detail="Error generating authorization URL")
 
 @router.get("/callback")
-async def callback(code: str) -> Dict[str, Any]:
-    """Handle Spotify OAuth callback and exchange code for tokens."""
+async def callback(code: str, request: Request) -> RedirectResponse:
+    """Handle OAuth callback and exchange code for tokens."""
     try:
-        # Initialize SpotifyOAuth
+        # Initialize SpotifyOAuth with the same settings
         sp_oauth = SpotifyOAuth(
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope=settings.SPOTIFY_SCOPES
+            scope=settings.SPOTIFY_SCOPES,
+            cache_handler=MemoryCacheHandler()
         )
         
         # Exchange code for tokens
@@ -143,7 +148,7 @@ async def callback(code: str) -> Dict[str, Any]:
         if not token_info or (isinstance(token_info, dict) and token_info.get("error")):
             error_msg = token_info.get("error_description") if isinstance(token_info, dict) else "Failed to get access token"
             logger.error(f"Error getting access token: {error_msg}")
-            raise HTTPException(status_code=400, detail=error_msg or "Failed to get access token")
+            return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?error={error_msg}", status_code=302)
             
         # Create JWT token
         access_token = create_access_token(
@@ -159,20 +164,14 @@ async def callback(code: str) -> Dict[str, Any]:
         logger.debug(f"JWT payload after creation: {payload}")
         
         logger.info("Successfully created access token")
-        return {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "spotify_access_token": token_info["access_token"],
-            "spotify_refresh_token": token_info["refresh_token"],
-            "expires_in": token_info["expires_in"]
-        }
+        return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?token={access_token}", status_code=302)
         
     except SpotifyException as e:
         logger.error(f"Spotify API error: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+        return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?error={str(e)}", status_code=302)
     except Exception as e:
         logger.error(f"Unexpected error in callback: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+        return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?error={str(e)}", status_code=302)
 
 @router.get("/me")
 async def get_current_user_info(current_user: str = Depends(get_current_user)) -> Dict[str, Any]:
