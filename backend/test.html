@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        .auth-url {
+            word-break: break-all;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <button onclick="testLogout()">Test Logout</button>
+    <button onclick="testLogin()">Test Login</button>
+    <div id="authUrl" class="auth-url" style="display: none;"></div>
+    <pre id="result"></pre>
+
+    <script>
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCUUJvWVhGUjhMWEhRazFqX09waTJUQTIzbktwNHluWFNWTkU1bUZ0eVh5LVdRM0pyWlVxTWRZWlZhLTI5MHdUb19TTE1FRDFYN0tFZDMzTDQ4YzZUN2RHM2g4QVJESXRvWGJZazNxZ0d6WU9BZnpzcGVuZ05hU09tQ0tYMGJJR2NhNDh6RDVqMzVSSl9CVzY4VlJSMVprYnJsS1RjWkxmX0RhbzZaRU5tYWFhREdValN2NHp0VWI1Y3pQREdsdE1YdXhIZ1hJZlJTdTVkSFFXcmQ1OXp5N1hZTnV5azVHT2JsM1Q5WHpZVjdKU0E5elV0RWhiWWRPNWI1Rlk4SzF0enRKb0o0SXBTR2VybUFNRzFsYjdlODZmWURXcHlmUHFOeUVpcC0xdmFWbVAxaHk5OEhzM2h0a0xkN2NKcUxlMjdQb1lDbWR1VThwanNOanl0REJXbVFIZWNHbWVGb3lwWUpnIiwicmVmcmVzaF90b2tlbiI6IkFRQlUxOXJQdTd2R081VFFDMTBWSE9ENm1mR2ZtUWozX2lySW1wdjlEU0k1dW1BWVpkZmJnclBqN1dmdXJQNVFva0xRekZOVmt2ei13XzBUM0IyeVByOXdyZ2ZBWFNPTFhTZHJiekgzbS1YNzl1MU9EUEwxbkpQS2R2blkxVE50MEQwIiwiZXhwIjoxNzQ3NDQzMTQ5fQ.DLGKbwRySrMNwKmvVPPen83mcZ_RQB6886niwA4UNWc';
+
+        function testAPI() {
+            fetch('http://127.0.0.1:8000/auth/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function testLogout() {
+            fetch('http://127.0.0.1:8000/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function testLogin() {
+            fetch('http://127.0.0.1:8000/auth/login', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                if (data.auth_url) {
+                    const authUrlDiv = document.getElementById('authUrl');
+                    authUrlDiv.textContent = data.auth_url;
+                    authUrlDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html> 
