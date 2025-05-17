@@ -1,14 +1,17 @@
-import pytest
 import os
+
+import pytest
+
 from app.core.config import Settings
 
+
 @pytest.fixture(scope="session")
-def test_settings():
+def test_settings() -> Settings:
     """Create test settings with mock values."""
     return Settings(
         SPOTIFY_CLIENT_ID="test_client_id",
         SPOTIFY_CLIENT_SECRET="test_client_secret",
         SECRET_KEY="test_secret_key",
         FRONTEND_URL="http://localhost:5173",
-        FRONTEND_CALLBACK_PATH="/callback"
-    ) 
+        FRONTEND_CALLBACK_PATH="/callback",
+    )

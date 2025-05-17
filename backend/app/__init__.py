@@ -1,0 +1,1 @@
+"""SpotifEye backend application package."""
