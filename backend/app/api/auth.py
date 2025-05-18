@@ -8,7 +8,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from spotipy.exceptions import SpotifyException
 import logging
 from fastapi.responses import HTMLResponse, RedirectResponse
-from spotipy.cache_handler import MemoryCacheHandler
+from spotipy.cache_handler import CacheHandler
 from pydantic import BaseModel
 import json
 
@@ -30,6 +30,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 # Token blacklist to track invalidated tokens
 token_blacklist: Set[str] = set()
+
+class NoCacheHandler(CacheHandler):
+    """Custom cache handler that doesn't persist tokens."""
+    def get_cached_token(self):
+        return None
+
+    def save_token_to_cache(self, token_info):
+        pass
 
 class CallbackRequest(BaseModel):
     code: str
@@ -117,11 +125,15 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(o
 
 @router.get("/login")
 async def login():
+    # Clear any existing sessions
+    token_blacklist.clear()
+    
     sp_oauth = SpotifyOAuth(
         client_id=settings.SPOTIFY_CLIENT_ID,
         client_secret=settings.SPOTIFY_CLIENT_SECRET,
         redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-        scope="user-read-private user-read-email user-top-read user-read-recently-played"
+        scope="user-read-private user-read-email user-top-read user-read-recently-played",
+        cache_handler=NoCacheHandler()
     )
     auth_url = sp_oauth.get_authorize_url()
     return RedirectResponse(url=auth_url)
@@ -133,7 +145,8 @@ async def callback(code: str):
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope="user-read-private user-read-email user-top-read user-read-recently-played"
+            scope="user-read-private user-read-email user-top-read user-read-recently-played",
+            cache_handler=NoCacheHandler()
         )
         
         # Exchange code for token
@@ -182,5 +195,16 @@ async def get_me(request: Request):
         raise HTTPException(status_code=401, detail=str(e))
 
 @router.post("/logout")
-async def logout():
+async def logout(request: Request):
+    try:
+        # Get the token from the Authorization header
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            # Add token to blacklist
+            token_blacklist.add(token)
+            logger.info("Token added to blacklist")
+    except Exception as e:
+        logger.error(f"Error during logout: {str(e)}")
+    
     return {"message": "Logged out successfully"} 
