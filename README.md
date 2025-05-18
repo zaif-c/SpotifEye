@@ -64,27 +64,27 @@ Spotify offers limited insights beyond basic playback history. Users lack contro
 - Implement basic dashboard layout
 - Add Spotify authentication flow
 
-### Day 2: Frontend and Polish (8-10 hours)
+---
 
-#### 1. Data Visualization (3-4 hours)
+#### 5. Data Visualization (3-4 hours)
 - Implement charts for audio features
 - Create track/artist display components
 - Add time range selector
 - Style components
 
-#### 2. Recommendations Feature (2-3 hours)
+#### 6. Recommendations Feature (2-3 hours)
 - If time permits, implement:
   - `/recommendations` endpoint
   - Recommendation display component
   - Basic recommendation logic
 
-#### 3. Polish and Testing (2-3 hours)
+#### 7. Polish and Testing (2-3 hours)
 - Add error handling
 - Implement loading states
 - Test on different devices
 - Fix any bugs
 
-#### 4. Deployment (1 hour)
+#### 8. Deployment (1 hour)
 - Deploy backend to Render
 - Deploy frontend to Vercel
 - Set up environment variables
