@@ -2,73 +2,65 @@
 
 ## 1. Project Initialization
 
-### Backend Setup
-- [ ] Create project directory structure
-- [ ] Initialize Python virtual environment
-- [ ] Create `requirements.txt` with initial dependencies:
-  - [ ] fastapi
-  - [ ] uvicorn
-  - [ ] python-dotenv
-  - [ ] httpx
-  - [ ] pydantic
-- [ ] Create `.env` file template
-- [ ] Initialize FastAPI app structure:
-  - [ ] Create `main.py`
-  - [ ] Create `auth.py`
-  - [ ] Create `spotify.py`
-  - [ ] Create `config.py`
+### Environment Setup
+- [x] Create Conda environment from environment.yml
+- [x] Activate Conda environment
+- [x] Verify environment setup:
+  - [x] Check Python version
+  - [x] Verify package installations
+  - [x] Test FastAPI installation
+  - [x] Test Spotipy installation
 
-### Frontend Setup
-- [ ] Create React app using Vite
-- [ ] Install frontend dependencies:
-  - [ ] axios
-  - [ ] react-router-dom
-  - [ ] recharts
-  - [ ] @chakra-ui/react (or preferred UI library)
-- [ ] Set up basic project structure:
-  - [ ] Create `src/components`
-  - [ ] Create `src/pages`
-  - [ ] Create `src/services`
-  - [ ] Create `src/hooks`
+### Backend Setup
+- [x] Create project directory structure
+- [x] Initialize FastAPI app structure:
+  - [x] Create `main.py`
+  - [x] Create `auth.py`
+  - [x] Create `spotify.py`
+  - [x] Create `config.py`
+- [x] Set up development tools:
+  - [x] Configure Black for code formatting
+  - [x] Configure isort for import sorting
+  - [x] Set up mypy for type checking
+  - [x] Configure pytest for testing
 
 ## 2. Spotify Integration
 
 ### Developer Dashboard Setup
-- [ ] Create Spotify Developer account
-- [ ] Register new application
-- [ ] Get Client ID and Client Secret
-- [ ] Configure redirect URI
-- [ ] Add credentials to `.env`
+- [x] Create Spotify Developer account
+- [x] Register new application
+- [x] Get Client ID and Client Secret
+- [x] Configure redirect URI
+- [x] Add credentials to `.env`
 
 ### Backend Auth Implementation
-- [ ] Implement `/login` endpoint
-- [ ] Implement `/callback` endpoint
-- [ ] Set up token storage
-- [ ] Implement token refresh logic
-- [ ] Add error handling for auth flow
-
-### Frontend Auth Flow
-- [ ] Create login page component
-- [ ] Implement Spotify OAuth redirect
-- [ ] Handle auth callback
-- [ ] Set up auth state management
-- [ ] Create protected route wrapper
+- [x] Implement `/login` endpoint
+- [x] Implement `/callback` endpoint
+- [x] Set up token storage
+- [x] Implement token refresh logic
+- [x] Add error handling for auth flow
 
 ## 3. Core Backend API
 
 ### Top Tracks Endpoint
-- [ ] Create `/top-tracks` endpoint
-- [ ] Implement time range parameter
-- [ ] Add error handling
-- [ ] Write API documentation
-- [ ] Test with Postman
+- [x] Create `/top-tracks` endpoint
+- [x] Implement time range parameter
+- [x] Add error handling
+- [x] Write API documentation
+- [x] Test with Postman
 
 ### Top Artists Endpoint
-- [ ] Create `/top-artists` endpoint
-- [ ] Implement time range parameter
-- [ ] Add error handling
-- [ ] Write API documentation
-- [ ] Test with Postman
+- [x] Create `/top-artists` endpoint
+- [x] Implement time range parameter
+- [x] Add error handling
+- [x] Write API documentation
+- [x] Test with Postman
+
+### Recently Played Endpoint
+- [x] Create `/recently-played` endpoint
+- [x] Add error handling
+- [x] Write API documentation
+- [x] Test with Postman
 
 ### Audio Features Endpoint
 - [ ] Create `/audio-features` endpoint
@@ -77,20 +69,38 @@
 - [ ] Write API documentation
 - [ ] Test with Postman
 
-## 4. Basic Frontend Structure
+## 4. Frontend Setup
 
-### Routing Setup
-- [ ] Set up React Router
-- [ ] Create route definitions
-- [ ] Implement route guards
-- [ ] Add 404 page
+### Project Creation
+- [x] Create React app using Vite
+- [x] Install frontend dependencies:
+  - [x] axios
+  - [x] react-router-dom
+  - [x] recharts
+  - [x] @chakra-ui/react (or preferred UI library)
+- [x] Set up basic project structure:
+  - [x] Create `src/components`
+  - [x] Create `src/pages`
+  - [x] Create `src/services`
+  - [x] Create `src/hooks`
 
-### Component Creation
-- [ ] Create layout component
-- [ ] Create navigation component
-- [ ] Create dashboard page
-- [ ] Create loading states
-- [ ] Create error states
+### Frontend Auth Flow
+- [x] Create login page component
+- [x] Implement Spotify OAuth redirect
+- [x] Handle auth callback
+- [x] Set up auth state management
+- [x] Create protected route wrapper
+
+### Basic Frontend Structure
+- [x] Set up React Router
+- [x] Create route definitions
+- [x] Implement route guards
+- [x] Add 404 page
+- [x] Create layout component
+- [x] Create navigation component
+- [x] Create dashboard page
+- [x] Create loading states
+- [x] Create error states
 
 ## 5. Data Visualization
 
@@ -108,9 +118,9 @@
 - [ ] Add error handling
 - [ ] Implement data caching
 
-## 6. Recommendations Feature
+## 6. Additional Features
 
-### Backend Implementation
+### Recommendations Feature
 - [ ] Create `/recommendations` endpoint
 - [ ] Implement seed track selection
 - [ ] Add recommendation parameters
