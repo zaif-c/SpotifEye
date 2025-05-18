@@ -1,1 +1,3 @@
-"""SpotifEye backend application package."""
+"""
+SpotifEye backend application.
+"""

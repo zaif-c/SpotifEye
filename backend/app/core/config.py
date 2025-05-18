@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     BACKEND_PORT: int = 8000
 
     # Frontend Settings
-    FRONTEND_URL: str = "http://127.0.0.1:5173"
+    FRONTEND_URL: str = "http://localhost:5173"
     FRONTEND_CALLBACK_PATH: str = "/callback"
 
     # Spotify Settings
@@ -36,16 +36,8 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = True
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        # Construct the redirect URI from components if not explicitly set
-        if not kwargs.get("SPOTIFY_REDIRECT_URI"):
-            self.SPOTIFY_REDIRECT_URI = (
-                f"{self.FRONTEND_URL}{self.FRONTEND_CALLBACK_PATH}"
-            )
-
     def get_spotify_redirect_uri(self) -> str:
-        """Return the Spotify redirect URI, constructed if not explicitly set."""
+        """Return the Spotify redirect URI."""
         return self.SPOTIFY_REDIRECT_URI
 
 
