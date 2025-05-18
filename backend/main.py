@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from app.core.config import settings
 from app.api.auth import router as auth_router
+from app.api.spotify import router as spotify_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -20,7 +22,9 @@ app.add_middleware(
     expose_headers=["*"]
 )
 
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
+# Include routers
+app.include_router(auth_router)
+app.include_router(spotify_router, prefix="/api/v1/spotify")
 
 @app.get("/")
 async def root() -> dict:
@@ -30,6 +34,11 @@ async def root() -> dict:
         "status": "operational",
         "version": "1.0.0",
     }
+
+@app.get("/callback")
+async def root_callback(request: Request) -> RedirectResponse:
+    """Handle callback requests directly."""
+    return RedirectResponse(url=f"/auth/callback{request.url.query}")
 
 @app.options("/{full_path:path}")
 async def options_route(full_path: str) -> dict:

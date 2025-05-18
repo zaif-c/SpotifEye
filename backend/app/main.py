@@ -8,7 +8,7 @@ app = FastAPI(title="SpotifEye API")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=[settings.FRONTEND_URL],  # Use frontend URL from settings
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

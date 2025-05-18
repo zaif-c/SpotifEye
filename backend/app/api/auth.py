@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -8,8 +8,9 @@ from spotipy.oauth2 import SpotifyOAuth
 from spotipy.exceptions import SpotifyException
 import logging
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi import Request
 from spotipy.cache_handler import MemoryCacheHandler
+from pydantic import BaseModel
+import json
 
 from app.core.config import settings
 
@@ -29,6 +30,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 # Token blacklist to track invalidated tokens
 token_blacklist: Set[str] = set()
+
+class CallbackRequest(BaseModel):
+    code: str
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Create a new JWT token."""
@@ -113,120 +117,70 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(o
 
 @router.get("/login")
 async def login():
-    """Redirect user to Spotify's OAuth login page."""
-    try:
-        sp_oauth = SpotifyOAuth(
-            client_id=settings.SPOTIFY_CLIENT_ID,
-            client_secret=settings.SPOTIFY_CLIENT_SECRET,
-            redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope=settings.SPOTIFY_SCOPES
-        )
-        auth_url = sp_oauth.get_authorize_url()
-        logger.info("Generated Spotify authorization URL")
-        return {"auth_url": auth_url}
-    except Exception as e:
-        logger.error(f"Error generating auth URL: {str(e)}")
-        raise HTTPException(status_code=500, detail="Error generating authorization URL")
+    sp_oauth = SpotifyOAuth(
+        client_id=settings.SPOTIFY_CLIENT_ID,
+        client_secret=settings.SPOTIFY_CLIENT_SECRET,
+        redirect_uri=settings.SPOTIFY_REDIRECT_URI,
+        scope="user-read-private user-read-email user-top-read user-read-recently-played"
+    )
+    auth_url = sp_oauth.get_authorize_url()
+    return RedirectResponse(url=auth_url)
 
 @router.get("/callback")
-async def callback(code: str, request: Request) -> RedirectResponse:
-    """Handle OAuth callback and exchange code for tokens."""
+async def callback(code: str):
     try:
-        # Initialize SpotifyOAuth with the same settings
         sp_oauth = SpotifyOAuth(
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope=settings.SPOTIFY_SCOPES,
-            cache_handler=MemoryCacheHandler()
+            scope="user-read-private user-read-email user-top-read user-read-recently-played"
         )
         
-        # Exchange code for tokens
+        # Exchange code for token
         token_info = sp_oauth.get_access_token(code)
-        logger.info("Received token info from Spotify")
         
-        if not token_info or (isinstance(token_info, dict) and token_info.get("error")):
-            error_msg = token_info.get("error_description") if isinstance(token_info, dict) else "Failed to get access token"
-            logger.error(f"Error getting access token: {error_msg}")
-            return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?error={error_msg}", status_code=302)
-            
-        # Create JWT token
-        access_token = create_access_token(
+        # Create a JWT token with the Spotify access token
+        jwt_token = create_access_token(
             data={
                 "sub": token_info["access_token"],
                 "refresh_token": token_info["refresh_token"]
-            },
-            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            }
         )
         
-        # Debug log to verify JWT payload
-        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        logger.debug(f"JWT payload after creation: {payload}")
-        
-        logger.info("Successfully created access token")
-        return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?token={access_token}", status_code=302)
-        
-    except SpotifyException as e:
-        logger.error(f"Spotify API error: {str(e)}")
-        return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?error={str(e)}", status_code=302)
+        # Redirect to frontend with JWT token
+        return RedirectResponse(url=f"{settings.FRONTEND_URL}/?token={jwt_token}")
     except Exception as e:
-        logger.error(f"Unexpected error in callback: {str(e)}")
-        return RedirectResponse(url=f"http://127.0.0.1:8080/test.html?error={str(e)}", status_code=302)
+        logger.error(f"Error in callback: {str(e)}")
+        return RedirectResponse(url=f"{settings.FRONTEND_URL}/?error={str(e)}")
 
 @router.get("/me")
-async def get_current_user_info(current_user: str = Depends(get_current_user)) -> Dict[str, Any]:
-    """Get information about the current user."""
+async def get_me(request: Request):
     try:
-        # Initialize Spotify client with the access token
-        sp = spotipy.Spotify(auth=current_user)
-        # Get user profile
-        user_info = sp.current_user()
-        logger.info(f"Successfully retrieved user info for user: {user_info.get('id')}")
-        return user_info
+        # Get the token from the Authorization header
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Invalid authorization header")
+        
+        token = auth_header.split(" ")[1]
+        try:
+            # Decode the JWT token
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            spotify_token = payload.get("sub")
+            if not spotify_token:
+                raise HTTPException(status_code=401, detail="Invalid token format")
+            
+            # Create a Spotify client with the token
+            sp = spotipy.Spotify(auth=spotify_token)
+            
+            # Get user profile
+            user = sp.current_user()
+            return user
+        except JWTError:
+            raise HTTPException(status_code=401, detail="Invalid token format")
     except Exception as e:
-        logger.error(f"Error getting user info: {str(e)}")
+        logger.error(f"Error in /me endpoint: {str(e)}")
         raise HTTPException(status_code=401, detail=str(e))
 
 @router.post("/logout")
-async def logout(token: str = Depends(oauth2_scheme)) -> Dict[str, str]:
-    """Logout the current user by invalidating their tokens."""
-    try:
-        # Validate token first
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            spotify_token = payload.get("sub")
-            if spotify_token is None:
-                raise HTTPException(
-                    status_code=401,
-                    detail="Invalid authentication credentials",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-        except JWTError:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        # Check if token is already blacklisted
-        if token in token_blacklist:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        # Add token to blacklist
-        token_blacklist.add(token)
-        logger.info("Successfully added token to blacklist")
-        
-        # Initialize Spotify client to close the session
-        sp = spotipy.Spotify(auth=spotify_token)
-        sp._session.close()
-        logger.info("Successfully logged out user")
-        return {"message": "Successfully logged out"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error during logout: {str(e)}")
-        raise HTTPException(status_code=500, detail="Error during logout") 
+async def logout():
+    return {"message": "Logged out successfully"} 
