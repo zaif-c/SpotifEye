@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Title, Grid, Card, Text, Image, Stack } from '@mantine/core';
-import { spotify } from '../services/api';
-import { LoadingScreen } from './LoadingScreen';
+import { useEffect, useState } from "react";
+import { Title, Grid, Card, Text, Image, Stack } from "@mantine/core";
+import { spotify } from "../services/api";
+import { LoadingScreen } from "./LoadingScreen";
 
 interface Artist {
   id: string;
@@ -27,8 +27,8 @@ export function TopArtists({ timeRange }: TopArtistsProps) {
         const data = await spotify.getTopArtists(timeRange);
         setArtists(data);
       } catch (err) {
-        console.error('Error fetching top artists:', err);
-        setError('Failed to load top artists');
+        console.error("Error fetching top artists:", err);
+        setError("Failed to load top artists");
       } finally {
         setLoading(false);
       }
@@ -47,7 +47,9 @@ export function TopArtists({ timeRange }: TopArtistsProps) {
 
   return (
     <Stack gap={0}>
-      <Title order={2} mb={0}>Your Top Artists</Title>
+      <Title order={2} mb={0}>
+        Your Top Artists
+      </Title>
       <Grid gutter="md" mt="md">
         {artists.map((artist, index) => (
           <Grid.Col key={artist.id} span={{ base: 12, sm: 6, md: 4 }}>
@@ -57,7 +59,7 @@ export function TopArtists({ timeRange }: TopArtistsProps) {
                   src={artist.images[0]?.url}
                   height={160}
                   alt={artist.name}
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: "cover" }}
                 />
               </Card.Section>
 
@@ -65,10 +67,15 @@ export function TopArtists({ timeRange }: TopArtistsProps) {
                 <Text fw={500} size="lg" lineClamp={1}>
                   {index + 1}. {artist.name}
                 </Text>
-                <Text size="sm" c="dimmed" lineClamp={1} style={{ minHeight: '1.5em' }}>
-                  {artist.genres && artist.genres.length > 0 
-                    ? artist.genres.slice(0, 2).join(', ')
-                    : ' '}
+                <Text
+                  size="sm"
+                  c="dimmed"
+                  lineClamp={1}
+                  style={{ minHeight: "1.5em" }}
+                >
+                  {artist.genres && artist.genres.length > 0
+                    ? artist.genres.slice(0, 2).join(", ")
+                    : " "}
                 </Text>
               </Stack>
             </Card>
@@ -77,4 +84,4 @@ export function TopArtists({ timeRange }: TopArtistsProps) {
       </Grid>
     </Stack>
   );
-} 
+}

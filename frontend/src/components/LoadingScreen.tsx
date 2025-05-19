@@ -1,10 +1,10 @@
-import { Center, Loader, Text, Stack } from '@mantine/core';
+import { Center, Loader, Text, Stack } from "@mantine/core";
 
 interface LoadingScreenProps {
   message?: string;
 }
 
-export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
+export function LoadingScreen({ message = "Loading..." }: LoadingScreenProps) {
   return (
     <Center h="100vh">
       <Stack align="center" gap="md">
@@ -13,4 +13,4 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
       </Stack>
     </Center>
   );
-} 
+}

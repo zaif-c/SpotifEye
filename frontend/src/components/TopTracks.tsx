@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Title, Grid, Card, Text, Image, Stack } from '@mantine/core';
-import { spotify } from '../services/api';
-import { LoadingScreen } from './LoadingScreen';
+import { useEffect, useState } from "react";
+import { Title, Grid, Card, Text, Image, Stack } from "@mantine/core";
+import { spotify } from "../services/api";
+import { LoadingScreen } from "./LoadingScreen";
 
 interface Track {
   id: string;
@@ -30,8 +30,8 @@ export function TopTracks({ timeRange }: TopTracksProps) {
         const data = await spotify.getTopTracks(timeRange);
         setTracks(data);
       } catch (err) {
-        console.error('Error fetching top tracks:', err);
-        setError('Failed to load top tracks');
+        console.error("Error fetching top tracks:", err);
+        setError("Failed to load top tracks");
       } finally {
         setLoading(false);
       }
@@ -50,7 +50,9 @@ export function TopTracks({ timeRange }: TopTracksProps) {
 
   return (
     <Stack gap={0}>
-      <Title order={2} mb={0}>Your Top Tracks</Title>
+      <Title order={2} mb={0}>
+        Your Top Tracks
+      </Title>
       <Grid gutter="md" mt="md">
         {tracks.map((track, index) => (
           <Grid.Col key={track.id} span={{ base: 12, sm: 6, md: 4 }}>
@@ -60,7 +62,7 @@ export function TopTracks({ timeRange }: TopTracksProps) {
                   src={track.album.images[0]?.url}
                   height={160}
                   alt={track.album.name}
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: "cover" }}
                 />
               </Card.Section>
 
@@ -69,7 +71,7 @@ export function TopTracks({ timeRange }: TopTracksProps) {
                   {index + 1}. {track.name}
                 </Text>
                 <Text size="sm" c="dimmed" lineClamp={1}>
-                  {track.artists.map(artist => artist.name).join(', ')}
+                  {track.artists.map((artist) => artist.name).join(", ")}
                 </Text>
                 <Text size="sm" c="dimmed" lineClamp={1}>
                   {track.album.name}
@@ -81,4 +83,4 @@ export function TopTracks({ timeRange }: TopTracksProps) {
       </Grid>
     </Stack>
   );
-} 
+}

@@ -1,13 +1,27 @@
-import { MantineProvider } from '@mantine/core';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Header } from './components/Header';
-import { UserProfile } from './components/UserProfile';
-import { Callback } from './pages/Callback';
-import { useAuth } from './hooks/useAuth';
-import { Container, Text, Button, Center, Stack, Image, Paper, Title } from '@mantine/core';
-import { auth } from './services/api';
-import '@mantine/core/styles.css';
-import { LoadingScreen } from './components/LoadingScreen';
+import { MantineProvider } from "@mantine/core";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { Header } from "./components/Header";
+import { UserProfile } from "./components/UserProfile";
+import { Callback } from "./pages/Callback";
+import { useAuth } from "./hooks/useAuth";
+import {
+  Container,
+  Text,
+  Button,
+  Center,
+  Stack,
+  Image,
+  Paper,
+  Title,
+} from "@mantine/core";
+import { auth } from "./services/api";
+import "@mantine/core/styles.css";
+import { LoadingScreen } from "./components/LoadingScreen";
 
 function Home() {
   const { token, error, loading } = useAuth();
@@ -38,13 +52,24 @@ function Home() {
   }
 
   return (
-    <Container size="sm" style={{ 
-      minHeight: 'calc(100vh - 60px)', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center' 
-    }}>
-      <Paper shadow="md" p="xl" radius="md" withBorder style={{ width: '100%' }}>
+    <Container
+      size="sm"
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "100%",
+        padding: "2rem",
+      }}
+    >
+      <Paper
+        shadow="md"
+        p="xl"
+        radius="md"
+        withBorder
+        style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
+      >
         <Stack align="center" gap="xl">
           <Stack gap={0} align="center">
             <Image
@@ -53,23 +78,26 @@ function Home() {
               width={120}
               height={120}
               fit="contain"
-              style={{ 
-                marginBottom: '-1.5rem',
-                objectFit: 'contain',
-                objectPosition: 'center',
-                padding: '0.2rem'
+              style={{
+                marginBottom: "-1.5rem",
+                objectFit: "contain",
+                objectPosition: "center",
+                padding: "0.2rem",
               }}
             />
-            <Title order={1} size="h2">SpotifEye</Title>
+            <Title order={1} size="h2">
+              SpotifEye
+            </Title>
           </Stack>
           <Text color="dimmed" ta="center" size="lg">
-            Connect with Spotify to view your music statistics and discover new insights about your listening habits.
+            Connect with Spotify to view your music statistics and discover new
+            insights about your listening habits.
           </Text>
-          <Button 
-            onClick={() => auth.login()} 
+          <Button
+            onClick={() => auth.login()}
             size="lg"
             variant="gradient"
-            gradient={{ from: '#1DB954', to: '#1ed760' }}
+            gradient={{ from: "#1DB954", to: "#1ed760" }}
             radius="xl"
             fullWidth
           >
