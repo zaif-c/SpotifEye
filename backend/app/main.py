@@ -18,8 +18,8 @@ app.add_middleware(
 )
 
 # Include routers with prefixes
-app.include_router(auth.router, tags=["auth"])
-app.include_router(spotify.router, prefix="/spotify", tags=["spotify"])
+app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["auth"])
+app.include_router(spotify.router, prefix=f"{settings.API_V1_STR}/spotify", tags=["spotify"])
 
 
 @app.get("/")
