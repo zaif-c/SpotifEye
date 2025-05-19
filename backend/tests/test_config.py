@@ -14,12 +14,16 @@ def test_settings_loading() -> None:
     assert settings.BACKEND_PORT == 8000
 
     # Test Frontend settings
-    assert settings.FRONTEND_URL == "http://127.0.0.1:8000"
+    assert settings.FRONTEND_URL == "http://localhost:5173"
     assert settings.FRONTEND_CALLBACK_PATH == "/callback"
 
-    # Test that redirect URI is constructed correctly
-    expected_redirect = f"{settings.FRONTEND_URL}{settings.FRONTEND_CALLBACK_PATH}"
-    assert settings.SPOTIFY_REDIRECT_URI == expected_redirect
+    # Test Spotify settings
+    assert settings.SPOTIFY_REDIRECT_URI == "http://127.0.0.1:8000/callback"
+    assert "user-read-private" in settings.SPOTIFY_SCOPES
+    assert "user-read-email" in settings.SPOTIFY_SCOPES
+
+    # Test Security settings
+    assert settings.ACCESS_TOKEN_EXPIRE_MINUTES == 30
 
 
 def test_settings_validation() -> None:
