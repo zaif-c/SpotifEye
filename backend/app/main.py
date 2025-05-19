@@ -1,15 +1,29 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+import sys
 
 from app.api import auth, spotify
 from app.core.config import settings
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="SpotifEye API")
+
+@app.on_event("startup")
+async def startup_event():
+    # Log the API prefix
+    logger.info(f"API V1 prefix: {settings.API_V1_STR}")
+    
+    # Log all registered routes
+    for route in app.routes:
+        logger.info(f"Registered route: {route.path} [{route.methods}]")
 
 # Configure CORS
 app.add_middleware(
@@ -22,16 +36,9 @@ app.add_middleware(
     max_age=3600,  # Cache preflight requests for 1 hour
 )
 
-# Log the API prefix
-logger.info(f"API V1 prefix: {settings.API_V1_STR}")
-
 # Include routers with prefixes
 app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["auth"])
 app.include_router(spotify.router, prefix=f"{settings.API_V1_STR}/spotify", tags=["spotify"])
-
-# Log all registered routes
-for route in app.routes:
-    logger.info(f"Registered route: {route.path} [{route.methods}]")
 
 
 @app.get("/")
