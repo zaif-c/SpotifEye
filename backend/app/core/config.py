@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Optional, Any
+from typing import Any, Optional
 
 from pydantic_settings import BaseSettings
 
@@ -10,23 +10,18 @@ class Settings(BaseSettings):
     # API Settings
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "SpotifEye"
-    BACKEND_HOST: str = "0.0.0.0"
-    BACKEND_PORT: int = 8000
+    BACKEND_HOST: str
+    BACKEND_PORT: int
 
     # Frontend Settings
-    FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_URL: str
     FRONTEND_CALLBACK_PATH: str = "/callback"
 
     # Spotify Settings
     SPOTIFY_CLIENT_ID: str
     SPOTIFY_CLIENT_SECRET: str
-    SPOTIFY_REDIRECT_URI: str = "http://127.0.0.1:8000/callback"
-    SPOTIFY_SCOPES: str = (
-        "user-read-private user-read-email user-read-playback-state user-modify-playback-state "
-        "user-read-currently-playing user-read-recently-played user-top-read "
-        "playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private "
-        "user-library-read user-library-modify user-follow-read user-follow-modify"
-    )
+    SPOTIFY_REDIRECT_URI: str
+    SPOTIFY_SCOPES: str
 
     # Security Settings
     SECRET_KEY: str
