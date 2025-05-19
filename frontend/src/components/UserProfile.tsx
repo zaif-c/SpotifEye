@@ -1,9 +1,20 @@
-import { useEffect, useState } from 'react';
-import { Container, Title, Text, Avatar, Group, Stack, Grid, Paper, SegmentedControl, Select } from '@mantine/core';
-import { auth } from '../services/api';
-import { TopTracks } from './TopTracks';
-import { TopArtists } from './TopArtists';
-import { LoadingScreen } from './LoadingScreen';
+import { useEffect, useState } from "react";
+import {
+  Container,
+  Title,
+  Text,
+  Avatar,
+  Group,
+  Stack,
+  Grid,
+  Paper,
+  SegmentedControl,
+  Select,
+} from "@mantine/core";
+import { auth } from "../services/api";
+import { TopTracks } from "./TopTracks";
+import { TopArtists } from "./TopArtists";
+import { LoadingScreen } from "./LoadingScreen";
 
 interface User {
   id: string;
@@ -16,8 +27,10 @@ export function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'tracks' | 'artists'>('tracks');
-  const [timeRange, setTimeRange] = useState<'short_term' | 'medium_term' | 'long_term'>('medium_term');
+  const [viewMode, setViewMode] = useState<"tracks" | "artists">("tracks");
+  const [timeRange, setTimeRange] = useState<
+    "short_term" | "medium_term" | "long_term"
+  >("medium_term");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -26,8 +39,8 @@ export function UserProfile() {
         setUser(response);
         setError(null);
       } catch (err) {
-        console.error('Error fetching user:', err);
-        setError('Failed to load profile. Please try again.');
+        console.error("Error fetching user:", err);
+        setError("Failed to load profile. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -44,7 +57,7 @@ export function UserProfile() {
     return (
       <Container size="lg" py="xl">
         <Text color="red" size="xl" ta="center">
-          {error || 'Failed to load profile'}
+          {error || "Failed to load profile"}
         </Text>
       </Container>
     );
@@ -65,20 +78,20 @@ export function UserProfile() {
 
         <Grid gutter="xl">
           <Grid.Col span={{ base: 12, md: 8 }}>
-            {viewMode === 'tracks' ? (
+            {viewMode === "tracks" ? (
               <TopTracks timeRange={timeRange} />
             ) : (
               <TopArtists timeRange={timeRange} />
             )}
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 4 }}>
-            <Paper 
-              p="md" 
+            <Paper
+              p="md"
               withBorder
               style={{
-                position: 'sticky',
-                top: '1rem',
-                marginTop: '3.2rem'
+                position: "sticky",
+                top: "1rem",
+                marginTop: "3.2rem",
               }}
             >
               <Stack gap="md">
@@ -86,8 +99,8 @@ export function UserProfile() {
                   value={viewMode}
                   onChange={(value) => setViewMode(value as typeof viewMode)}
                   data={[
-                    { label: 'Tracks', value: 'tracks' },
-                    { label: 'Artists', value: 'artists' },
+                    { label: "Tracks", value: "tracks" },
+                    { label: "Artists", value: "artists" },
                   ]}
                   fullWidth
                 />
@@ -96,11 +109,11 @@ export function UserProfile() {
                   value={timeRange}
                   onChange={(value) => setTimeRange(value as typeof timeRange)}
                   data={[
-                    { value: 'short_term', label: 'Last 4 Weeks' },
-                    { value: 'medium_term', label: 'Last 6 Months' },
-                    { value: 'long_term', label: 'All Time' },
+                    { value: "short_term", label: "Last 4 Weeks" },
+                    { value: "medium_term", label: "Last 6 Months" },
+                    { value: "long_term", label: "All Time" },
                   ]}
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                 />
               </Stack>
             </Paper>
@@ -109,4 +122,4 @@ export function UserProfile() {
       </Stack>
     </Container>
   );
-} 
+}

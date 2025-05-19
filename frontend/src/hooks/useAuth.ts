@@ -1,17 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { auth } from '../services/api';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { auth } from "../services/api";
 
-const API_URL = 'http://localhost:8000';
-
-interface TokenData {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  scope: string;
-  expires_at: number;
-  refresh_token: string;
-}
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface AuthState {
   token: string | null;
@@ -27,9 +18,9 @@ const clearAllStorage = () => {
   // Clear sessionStorage
   sessionStorage.clear();
   // Clear all cookies
-  document.cookie.split(';').forEach(cookie => {
+  document.cookie.split(";").forEach((cookie) => {
     document.cookie = cookie
-      .replace(/^ +/, '')
+      .replace(/^ +/, "")
       .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
   });
 };
@@ -50,7 +41,7 @@ export function useAuth(): AuthState {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const storedToken = localStorage.getItem('token');
+        const storedToken = localStorage.getItem("token");
         if (!storedToken) {
           resetState();
           setLoading(false);
@@ -60,8 +51,7 @@ export function useAuth(): AuthState {
         await auth.getMe();
         setToken(storedToken);
         setError(null);
-      } catch (err) {
-        console.error('Auth check failed:', err);
+      } catch {
         resetState();
       } finally {
         setLoading(false);
@@ -73,24 +63,20 @@ export function useAuth(): AuthState {
 
   useEffect(() => {
     // Check for token or error in URL
-    const tokenFromUrl = searchParams.get('token');
-    const errorFromUrl = searchParams.get('error');
-
-    console.log('🔍 URL params:', { tokenFromUrl, errorFromUrl });
+    const tokenFromUrl = searchParams.get("token");
+    const errorFromUrl = searchParams.get("error");
 
     if (tokenFromUrl) {
-      console.log('✅ Setting token from URL:', tokenFromUrl);
       // Reset everything before setting new token
       resetState();
-      
+
       // Store the JWT token
-      localStorage.setItem('token', tokenFromUrl);
+      localStorage.setItem("token", tokenFromUrl);
       setToken(tokenFromUrl);
       setError(null);
       // Remove token from URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (errorFromUrl) {
-      console.error('🔴 Error from URL:', errorFromUrl);
       resetState();
       setError(errorFromUrl);
       // Remove error from URL
@@ -100,15 +86,12 @@ export function useAuth(): AuthState {
 
   const logout = async () => {
     try {
-      console.log('Starting logout process...');
-      // First, log out from our app
-      console.log('Calling backend logout endpoint...');
+      // First, log out from app
       await fetch(`${API_URL}/logout`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
       });
-      
-      console.log('Backend logout successful, clearing storage...');
+
       // Clear all local storage
       localStorage.clear();
       sessionStorage.clear();
@@ -116,12 +99,11 @@ export function useAuth(): AuthState {
       setError(null);
 
       // Redirect to home page
-      window.location.href = '/';
-    } catch (err) {
-      console.error('Logout error:', err);
-      setError('Failed to logout');
+      window.location.href = "/";
+    } catch {
+      setError("Failed to logout");
     }
   };
 
   return { token, error, loading, logout };
-} 
+}

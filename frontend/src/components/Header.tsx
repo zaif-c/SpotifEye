@@ -1,6 +1,6 @@
-import { Container, Group, Button, Text, Stack, Image } from '@mantine/core';
-import { useAuth } from '../hooks/useAuth';
-import { auth } from '../services/api';
+import { Container, Group, Button, Text, Stack, Image } from "@mantine/core";
+import { useAuth } from "../hooks/useAuth";
+import { auth } from "../services/api";
 
 export function Header() {
   const { token } = useAuth();
@@ -9,9 +9,13 @@ export function Header() {
     try {
       await auth.logout();
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
+
+  if (!token) {
+    return null;
+  }
 
   return (
     <Container fluid px={0} py="md">
@@ -23,21 +27,21 @@ export function Header() {
             width={64}
             height={64}
             fit="contain"
-            style={{ 
-              marginBottom: '-1rem',
-              objectFit: 'contain',
-              objectPosition: 'center',
-              padding: '0.2rem'
+            style={{
+              marginBottom: "-1rem",
+              objectFit: "contain",
+              objectPosition: "center",
+              padding: "0.2rem",
             }}
           />
-          <Text size="xl" fw={700}>SpotifEye</Text>
+          <Text size="xl" fw={700}>
+            SpotifEye
+          </Text>
         </Stack>
-        {token ? (
-          <Button onClick={logout} variant="light">
-            Logout
-          </Button>
-        ) : null}
+        <Button onClick={logout} variant="light">
+          Logout
+        </Button>
       </Group>
     </Container>
   );
-} 
+}
