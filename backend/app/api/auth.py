@@ -134,7 +134,7 @@ async def login():
         client_id=settings.SPOTIFY_CLIENT_ID,
         client_secret=settings.SPOTIFY_CLIENT_SECRET,
         redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-        scope="user-read-private user-read-email user-top-read user-read-recently-played",
+        scope=settings.SPOTIFY_SCOPES,
         cache_handler=NoCacheHandler(),
     )
     auth_url = sp_oauth.get_authorize_url()
@@ -144,30 +144,41 @@ async def login():
 @router.get("/callback")
 async def callback(code: str):
     try:
+        logger.info(f"Received callback with code: {code[:10]}...")
+        
         sp_oauth = SpotifyOAuth(
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope="user-read-private user-read-email user-top-read user-read-recently-played",
+            scope=settings.SPOTIFY_SCOPES,
             cache_handler=NoCacheHandler(),
         )
+        logger.info(f"Created SpotifyOAuth with redirect_uri: {settings.SPOTIFY_REDIRECT_URI}")
 
         # Exchange code for token
+        logger.info("Exchanging code for token...")
         token_info = sp_oauth.get_access_token(code)
+        logger.info("Successfully exchanged code for token")
 
         # Create a JWT token with the Spotify access token
+        logger.info("Creating JWT token...")
         jwt_token = create_access_token(
             data={
                 "sub": token_info["access_token"],
                 "refresh_token": token_info["refresh_token"],
             }
         )
+        logger.info("Successfully created JWT token")
 
         # Redirect to frontend with JWT token
-        return RedirectResponse(url=f"{settings.FRONTEND_URL}/?token={jwt_token}")
+        frontend_url = f"{settings.FRONTEND_URL}/?token={jwt_token}"
+        logger.info(f"Redirecting to frontend: {frontend_url}")
+        return RedirectResponse(url=frontend_url)
     except Exception as e:
         logger.error(f"Error in callback: {str(e)}")
-        return RedirectResponse(url=f"{settings.FRONTEND_URL}/?error={str(e)}")
+        error_url = f"{settings.FRONTEND_URL}/?error={str(e)}"
+        logger.info(f"Redirecting to frontend with error: {error_url}")
+        return RedirectResponse(url=error_url)
 
 
 @router.get("/me")
