@@ -43,20 +43,20 @@ api.interceptors.response.use(
 export const auth = {
   API_URL,
   login: () => {
-    window.open(`${API_URL}/api/v1/login`, '_self');
+    window.open(`${API_URL}/login`, '_self');
   },
   logout: async () => {
-    await api.post("/api/v1/logout");
+    await api.post("/logout");
     localStorage.removeItem("token");
     localStorage.removeItem("spotify_code");
     window.location.href = "/";
   },
   getMe: async () => {
-    const response = await api.get("/api/v1/me");
+    const response = await api.get("/me");
     return response.data;
   },
   handleCallback: async (code: string) => {
-    const response = await api.post("/api/v1/callback", { code });
+    const response = await api.post("/callback", { code });
     return response.data;
   },
 };
@@ -64,18 +64,18 @@ export const auth = {
 export const spotify = {
   getTopTracks: async (timeRange: string = "medium_term", limit: number = 50) => {
     const response = await api.get(
-      `/api/v1/spotify/top-tracks?time_range=${timeRange}&limit=${limit}`,
+      `/spotify/top-tracks?time_range=${timeRange}&limit=${limit}`,
     );
     return response.data;
   },
   getTopArtists: async (timeRange: string = "medium_term", limit: number = 50) => {
     const response = await api.get(
-      `/api/v1/spotify/top-artists?time_range=${timeRange}&limit=${limit}`,
+      `/spotify/top-artists?time_range=${timeRange}&limit=${limit}`,
     );
     return response.data;
   },
   getRecentlyPlayed: async () => {
-    const response = await api.get("/api/v1/spotify/recently-played");
+    const response = await api.get("/spotify/recently-played");
     return response.data;
   },
 };
