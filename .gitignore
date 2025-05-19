@@ -55,3 +55,6 @@ test.html
 # OS
 .DS_Store
 Thumbs.db 
+
+# Local development files
+TODO.md 
