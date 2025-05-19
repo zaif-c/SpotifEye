@@ -1,0 +1,26 @@
+name: spotifeye
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - fastapi
+  - uvicorn
+  - python-dotenv
+  - httpx
+  - pydantic
+  - pytest
+  - black
+  - isort
+  - mypy
+  - pip:
+    - spotipy
+    - python-jose[cryptography]
+    - passlib[bcrypt]
+    - python-multipart
+    - aiohttp
+    - pandas
+    - numpy
+    - matplotlib
+    - seaborn 
