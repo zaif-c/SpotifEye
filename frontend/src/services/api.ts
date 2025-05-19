@@ -43,7 +43,7 @@ api.interceptors.response.use(
 export const auth = {
   API_URL,
   login: () => {
-    window.location.href = `${API_URL}/api/v1/login`;
+    window.open(`${API_URL}/api/v1/login`, '_self');
   },
   logout: async () => {
     await api.post("/api/v1/logout");
