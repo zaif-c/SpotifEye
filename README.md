@@ -25,7 +25,6 @@ Spotify offers limited insights beyond basic playback history. Users lack contro
   - Fetch top tracks (`/top-tracks`)
   - Fetch top artists (`/top-artists`)
   - Get user profile (`/me`)
-  - Secure logout functionality
 
 ### Frontend (React + TypeScript)
 - Modern, responsive UI using Mantine
