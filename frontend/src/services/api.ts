@@ -64,18 +64,18 @@ export const auth = {
 export const spotify = {
   getTopTracks: async (timeRange: string = "medium_term", limit: number = 50) => {
     const response = await api.get(
-      `/spotify/top-tracks?time_range=${timeRange}&limit=${limit}`,
+      `/api/v1/spotify/top-tracks?time_range=${timeRange}&limit=${limit}`,
     );
     return response.data;
   },
   getTopArtists: async (timeRange: string = "medium_term", limit: number = 50) => {
     const response = await api.get(
-      `/spotify/top-artists?time_range=${timeRange}&limit=${limit}`,
+      `/api/v1/spotify/top-artists?time_range=${timeRange}&limit=${limit}`,
     );
     return response.data;
   },
   getRecentlyPlayed: async () => {
-    const response = await api.get("/spotify/recently-played");
+    const response = await api.get("/api/v1/spotify/recently-played");
     return response.data;
   },
 };
