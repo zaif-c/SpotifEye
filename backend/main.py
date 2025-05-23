@@ -40,7 +40,7 @@ async def root() -> dict:
 @app.get("/callback")
 async def root_callback(request: Request) -> RedirectResponse:
     """Handle callback requests directly."""
-    return RedirectResponse(url=f"/auth/callback{request.url.query}")
+    return RedirectResponse(url=f"/callback{request.url.query}")
 
 
 @app.options("/{full_path:path}")
