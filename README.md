@@ -1,5 +1,10 @@
 # SpotifEye: Your Spotify Listening Dashboard
 
+### [***Click this link***](https://spotifeye-chi.vercel.app/) to access the app!
+<img width="1470" alt="Screenshot 2025-05-29 at 4 42 28 PM" src="https://github.com/user-attachments/assets/d5780115-01a4-45e8-836d-2ee4e34656e3" />
+
+***Note:*** Deployed website tracks the deployment branch of this repository
+
 ## Overview
 
 **SpotifEye** is a full-stack web application that connects to a user's Spotify account and visualizes their listening habits using **FastAPI** (Python) and **React** (TypeScript). The app provides access to top tracks and favorite artists with customizable time ranges, offering insights into your music preferences.
@@ -25,7 +30,6 @@ Spotify offers limited insights beyond basic playback history. Users lack contro
   - Fetch top tracks (`/top-tracks`)
   - Fetch top artists (`/top-artists`)
   - Get user profile (`/me`)
-  - Secure logout functionality
 
 ### Frontend (React + TypeScript)
 - Modern, responsive UI using Mantine
