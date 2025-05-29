@@ -3,7 +3,9 @@
 ### [***Click this link***](https://spotifeye-chi.vercel.app/) to access the app!
 <img width="1470" alt="Screenshot 2025-05-29 at 4 42 28 PM" src="https://github.com/user-attachments/assets/d5780115-01a4-45e8-836d-2ee4e34656e3" />
 
-***Note:*** Deployed website tracks the deployment branch of this repository
+### ***Notes:***
+* Deployed website tracks the deployment branch of this repository.
+* As per Spotify for Developers' [5/15/25 update](https://developer.spotify.com/blog/2025-04-15-updating-the-criteria-for-web-api-extended-access) to their Terms & Conditions, only Spotify accounts with emails registered to the SpotifEye app will be able to log in to the website. Consequently, access to the SpotifEye app will no longer be public.
 
 ## Overview
 
